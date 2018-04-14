@@ -58,6 +58,7 @@ router.post('/message', (req, res) => {
         smooch.appUsers.sendMessage(appUserId, messageCreator(infoText))
           .then(response => res.end())
           .catch(err => res.end());
+        break;
       default:
         smooch.appUsers.sendMessage(appUserId, messageCreator(noneText))
           .then(response => res.end())
