@@ -4,6 +4,20 @@ const config = require('../config/config');
 const LUISClient = require("luis-node-sdk");
 const Smooch = require('smooch-core');
 
+// Smooch
+const smooch = new Smooch({
+  keyId: config.SMOOCH.KEYID,
+  secret: config.SMOOCH.SECRET,
+  scope: 'app'
+});
+
+// Luis
+let LUISclient = LUISClient({
+  appId: config.LUIS.APPID,
+  appKey: config.LUIS.APPSECRET,
+  verbose: true
+});
+
 router.post('/message', (req, res) => {
   const appUserId = req.body.appUser._id;
   const text = req.body.messages[0].text;
