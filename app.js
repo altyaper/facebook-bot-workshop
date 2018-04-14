@@ -5,6 +5,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require("./config/config");
+const indexRoutes = require('./routes/index');
 const botRoutes = require('./routes/bot');
 
 const app = express();
@@ -19,20 +20,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rutas
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
-app.get('/policy', (req, res) => {
-  res.render('policy');
-});
-
+app.use('/', indexRoutes);
 app.use('/bot', botRoutes);
-
-app.post('/message', (req, res) => {
-  res.end();
-});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -42,7 +31,7 @@ app.use(function(req, res, next) {
 });
 
 app.listen(config.PORT, function () {
-  console.log('Example app listening on port 3000!')
+  console.log(`Example app listening on port ${config.PORT}!`)
 });
 
 module.exports = app;
