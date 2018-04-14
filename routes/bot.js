@@ -24,8 +24,8 @@ router.post('/message', (req, res) => {
   console.log('Received message was:', text);
 
   LUIS.predict(text, {
-    onSuccess: (response) => successPredict(response, res),
-    onFailure: (response) => failurePredict(response, res)
+    onSuccess: (data) => successPredict(data, res),
+    onFailure: (data) => failurePredict(data, res)
   });
 
   function failurePredict(err, res) {
@@ -33,13 +33,17 @@ router.post('/message', (req, res) => {
     res.sendStatus(500);
   }
 
-  function successPredict(response, res) {
-    const { intent } = response.topScoringIntent;
+  function successPredict(data, res) {
+    const { intent } = data.topScoringIntent;
     console.log('Top intent:', intent);
-    console.log('Whole response:', response);
-    console.log('Top scoring:', response.topScoringIntent);
+    console.log('Whole response:', data);
+    console.log('Top scoring:', data.topScoringIntent);
 
-    const messageCreator = (text) => ({ type: 'text', text, role: 'appMaker'});
+    const sendMessage = (text) => (
+      smooch.appUsers.sendMessage(appUserId, { type: 'text', text, role: 'appMaker'})
+        .then(response => res.end())
+        .catch(err => res.end())
+    );
 
     const greetText = "Hola, mi nombre es Fábula, soy una robot que necesita entrenamiento.";
     const farewellText = "¡Fue un placer platicar contigo, adiós!.";
@@ -48,24 +52,16 @@ router.post('/message', (req, res) => {
 
     switch (intent) {
       case "Saludo":
-        smooch.appUsers.sendMessage(appUserId, messageCreator(greetText))
-          .then(response => res.end())
-          .catch(err => res.end());
+        sendMessage(greetText);
         break;
       case "Despedida":
-        smooch.appUsers.sendMessage(appUserId, messageCreator(farewellText))
-          .then(response => res.end())
-          .catch(err => res.end());
+        sendMessage(farewellText);
         break;
       case "Eventos":
-        smooch.appUsers.sendMessage(appUserId, messageCreator(infoText))
-          .then(response => res.end())
-          .catch(err => res.end());
+        sendMessage(infoText);
         break;
       default:
-        smooch.appUsers.sendMessage(appUserId, messageCreator(noneText))
-          .then(response => res.end())
-          .catch(err => res.end());
+        sendMessage(noneText);
     }
   }
 });
