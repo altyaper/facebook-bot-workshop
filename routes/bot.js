@@ -3,8 +3,7 @@ const router = express.Router();
 const config = require('../config/config');
 
 router.post('/message', (req, res) => {
-  console.log("something llego");
-  console.log(req.body);
+  // TODO: INTEGRATE LUIS AI
   res.sendStatus(203);
 
 });
