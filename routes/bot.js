@@ -3,63 +3,67 @@ const router = express.Router();
 const config = require('../config/config');
 const LUISClient = require("luis-node-sdk");
 const Smooch = require('smooch-core');
-
-// Smooch
 const smooch = new Smooch({
   keyId: config.SMOOCH.KEYID,
   secret: config.SMOOCH.SECRET,
   scope: 'app'
 });
 
-// Luis
-let LUISclient = LUISClient({
+let LUIS = LUISClient({
   appId: config.LUIS.APPID,
   appKey: config.LUIS.APPSECRET,
   verbose: true
 });
 
+let appUserId;
+
 router.post('/message', (req, res) => {
-  const appUserId = req.body.appUser._id;
+  appUserId = req.body.appUser._id;
   const text = req.body.messages[0].text;
 
-  console.log(text);
+  console.log('Received message was:', text);
 
-  LUISclient.predict(text, {
-    //On success of prediction
-    onSuccess: function (response) {
-      console.log(response.topScoringIntent.intent);
-      switch (response.topScoringIntent.intent) {
-        case "Greet":
-          smooch.appUsers.sendMessage(appUserId, {
-            type: 'text',
-            text: "Hola, me llamo Bot Viajero y puedo ayudarte a planear tus proximas vacaciones",
-            role: 'appMaker'
-          }).then(response => {
-            res.end();
-          }).catch(err => {
-            console.log(err);
-            res.end();
-          });
-          break;
-        default:
-          smooch.appUsers.sendMessage(appUserId, {
-            type: 'text',
-            text: "Me gustaria ser humano para poder entenderte, intenta ser mas especifico",
-            role: 'appMaker'
-          }).then(response => {
-            res.end();
-          }).catch(err => {
-            res.end();
-          });
-      }
-    },
-    //On failure of prediction
-    onFailure: function (err) {
-      console.error(err);
-    }
+  LUIS.predict(text, {
+    onSuccess: successPredict,
+    onFailure: failurePredict
   });
+
   res.sendStatus(203);
 
 });
+
+function failurePredict(err) {
+  console.error(err);
+}
+
+function successPredict(response) {
+  const topIntent = response.topScoringIntent.intent;
+  console.log(topIntent);
+  switch (topIntent) {
+    case "Greet":
+      smooch.appUsers.sendMessage(appUserId, {
+        type: 'text',
+        text: "Hola, me llamo fabulaRobot y puedo ayudarte a planear tus proximas vacaciones",
+        role: 'appMaker'
+      }).then(response => {
+        console.log('response', response);
+        res.end();
+      }).catch(err => {
+        console.log(err);
+        res.end();
+      });
+      break;
+    default:
+      smooch.appUsers.sendMessage(appUserId, {
+        type: 'text',
+        text: "Me gustaría ser humano para poder entenderte, intenta ser más específico",
+        role: 'appMaker'
+      }).then(response => {
+        res.end();
+      }).catch(err => {
+        res.end();
+      });
+  }
+}
 
 module.exports = router;
