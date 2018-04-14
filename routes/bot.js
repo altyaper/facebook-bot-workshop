@@ -28,56 +28,41 @@ router.post('/message', (req, res) => {
     onFailure: (response) => failurePredict(response, res)
   });
 
-  res.sendStatus(203);
-
-});
-
-function failurePredict(err, res) {
-  console.error(err);
-  res.sendStatus(500);
-}
-
-function successPredict(response, res) {
-  const topIntent = response.topScoringIntent.intent;
-  switch (topIntent) {
-    case "Greet":
-    smooch.appUsers.sendMessage(appUserId, {
-      type: 'text',
-      text: "Hola, me llamo fabulaRobot soy un robot que necesita entrenamiento.",
-      role: 'appMaker'
-    }).then(response => {
-      console.log('response', response);
-      res.end();
-    }).catch(err => {
-      console.log(err);
-      res.end();
-    });
-    break;
-    case "farewell":
-      smooch.appUsers.sendMessage(appUserId, {
-        type: 'text',
-        text: "¡Fue un placer platicar contigo, adiós!",
-        role: 'appMaker'
-      }).then(response => {
-        console.log('response', response);
-        res.end();
-      }).catch(err => {
-        console.log(err);
-        res.end();
-      });
-      break;
-    default:
-      smooch.appUsers.sendMessage(appUserId, {
-        type: 'text',
-        text: "Me gustaría ser humano para poder entenderte, intenta ser más específico",
-        role: 'appMaker'
-      }).then(response => {
-        res.end();
-      }).catch(err => {
-        console.log("error", err);
-        res.end();
-      });
+  function failurePredict(err, res) {
+    console.error(err);
+    res.sendStatus(500);
   }
-}
+
+  function successPredict(response, res) {
+    const { intent } = response.topScoringIntent;
+    const messageCreator = (text) => ({ type: 'text', text, role: 'appMaker'});
+
+    const greetText = "Hola, mi nombre es Fábula, soy una robot que necesita entrenamiento.";
+    const farewellText = "¡Fue un placer platicar contigo, adiós!.";
+    const noneText = "Me gustaría ser humano para poder entenderte, intenta ser más específico.";
+    const infoText = "Del 14 de abril al 28 de mayo, tendremos funciones los jueves a las 8pm, a un costo de 200 pesos";
+
+    switch (intent) {
+      case "Saludo":
+        smooch.appUsers.sendMessage(appUserId, messageCreator(greetText))
+          .then(response => res.end())
+          .catch(err => res.end());
+        break;
+      case "Despedida":
+        smooch.appUsers.sendMessage(appUserId, messageCreator(farewellText))
+          .then(response => res.end())
+          .catch(err => res.end());
+        break;
+      case "Eventos":
+        smooch.appUsers.sendMessage(appUserId, messageCreator(infoText))
+          .then(response => res.end())
+          .catch(err => res.end());
+      default:
+        smooch.appUsers.sendMessage(appUserId, messageCreator(noneText))
+          .then(response => res.end())
+          .catch(err => res.end());
+    }
+  }
+});
 
 module.exports = router;
