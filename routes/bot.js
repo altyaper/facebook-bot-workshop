@@ -24,21 +24,21 @@ router.post('/message', (req, res) => {
   console.log('Received message was:', text);
 
   LUIS.predict(text, {
-    onSuccess: successPredict,
-    onFailure: failurePredict
+    onSuccess: (response) => successPredict(response, res),
+    onFailure: (response) => failurePredict(response, res)
   });
 
   res.sendStatus(203);
 
 });
 
-function failurePredict(err) {
+function failurePredict(err, res) {
   console.error(err);
+  res.sendStatus(500);
 }
 
-function successPredict(response) {
+function successPredict(response, res) {
   const topIntent = response.topScoringIntent.intent;
-  console.log(topIntent);
   switch (topIntent) {
     case "Greet":
       smooch.appUsers.sendMessage(appUserId, {
@@ -61,6 +61,7 @@ function successPredict(response) {
       }).then(response => {
         res.end();
       }).catch(err => {
+        console.log("error", err);
         res.end();
       });
   }
