@@ -14,7 +14,6 @@
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
-    "luis-node-sdk": "^1.0.0",
-    "smooch-core": "^4.3.0"
+    "luis-node-sdk": "^1.0.0"    
   }
 }

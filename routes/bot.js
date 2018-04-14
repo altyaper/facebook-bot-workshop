@@ -10,5 +10,11 @@ router.get('/webhook', (req, res) => {
   }
 });
 
+router.post('/webhook', (req, res) => {
+  let data = req.body;
+  console.log(data);
+  res.sendStatus(200);
+});
+
 
 module.exports = router;
