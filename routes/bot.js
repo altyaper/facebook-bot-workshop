@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const config = require('../config/config');
+const LUISClient = require("luis-node-sdk");
+const Smooch = require('smooch-core');
 
 router.post('/message', (req, res) => {
   const appUserId = req.body.appUser._id;

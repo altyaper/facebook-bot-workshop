@@ -6,8 +6,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require("./config/config");
 const botRoutes = require('./routes/bot');
-const LUISClient = require("luis-node-sdk");
-const Smooch = require('smooch-core');
 
 const app = express();
 
