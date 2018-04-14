@@ -24,6 +24,10 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/policy', (req, res) => {
+  res.render('policy');
+});
+
 app.use('/bot', botRoutes);
 
 app.post('/message', (req, res) => {
