@@ -5,7 +5,7 @@ const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require("./config/config");
-
+const botRoutes = require('./routes/bot');
 
 var app = express();
 
@@ -23,6 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.render('index');
 });
+
+app.use('/bot', botRoutes);
 
 app.post('/message', (req, res) => {
   res.end();
