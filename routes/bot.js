@@ -35,6 +35,7 @@ router.post('/message', (req, res) => {
 
   function successPredict(response, res) {
     const { intent } = response.topScoringIntent;
+    console.log('Top intent:', intent);
     const messageCreator = (text) => ({ type: 'text', text, role: 'appMaker'});
 
     const greetText = "Hola, mi nombre es Fábula, soy una robot que necesita entrenamiento.";
