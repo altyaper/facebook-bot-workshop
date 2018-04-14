@@ -41,9 +41,22 @@ function successPredict(response, res) {
   const topIntent = response.topScoringIntent.intent;
   switch (topIntent) {
     case "Greet":
+    smooch.appUsers.sendMessage(appUserId, {
+      type: 'text',
+      text: "Hola, me llamo fabulaRobot soy un robot que necesita entrenamiento.",
+      role: 'appMaker'
+    }).then(response => {
+      console.log('response', response);
+      res.end();
+    }).catch(err => {
+      console.log(err);
+      res.end();
+    });
+    break;
+    case "farewell":
       smooch.appUsers.sendMessage(appUserId, {
         type: 'text',
-        text: "Hola, me llamo fabulaRobot y puedo ayudarte a planear tus proximas vacaciones",
+        text: "¡Fue un placer platicar contigo, adiós!",
         role: 'appMaker'
       }).then(response => {
         console.log('response', response);
