@@ -41,7 +41,7 @@ function failurePredict(err, res) {
 }
 
 function successPredict(data, res) {
-  const {intent} = data.topScoringIntent;
+  const { intent } = data.topScoringIntent;
   console.log('Top intent:', intent);
   console.log('Whole response:', data);
   console.log('Top scoring:', data.topScoringIntent);
